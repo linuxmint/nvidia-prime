@@ -1,3 +1,9 @@
+nvidia-prime (0.6.2linuxmint1) qiana; urgency=medium
+
+  * Added support for MDM
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 17 May 2014 12:53:03 +0100
+
 nvidia-prime (0.6.2) trusty; urgency=medium
 
   * prime-supported:

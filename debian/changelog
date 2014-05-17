@@ -1,0 +1,209 @@
+nvidia-prime (0.6.2) trusty; urgency=medium
+
+  * prime-supported:
+    - Check /var/lib/ubuntu-drivers-common/requires_offloading to
+      know if we need to offload rendering. There's no need to do
+      hardware detection again when the gpu-manager already does
+      all the work.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Mon, 31 Mar 2014 17:13:37 +0200
+
+nvidia-prime (0.6.1) trusty; urgency=medium
+
+  * debian/preinst.in, debian/rules:
+    - Move the lightdm configuration file from /etc to /usr/share.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 13 Mar 2014 17:13:50 +0100
+
+nvidia-prime (0.6) trusty; urgency=low
+
+  * debian/control:
+    - Breaks: ubuntu-drivers-common (<< 1:0.2.89).
+  * Add support for the new ubuntu-drivers-common. The gpu-manager
+    will take care of most of the work. We only need to tell
+    lightdm that we want to offload rendering, and to run the
+    gpu-manager on log out.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 06 Mar 2014 09:19:12 +0100
+
+nvidia-prime (0.5.7) trusty; urgency=low
+
+  * debian/preinst.in:
+    - Do not remove the lightdm configuration file.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 21 Feb 2014 14:49:59 +0100
+
+nvidia-prime (0.5.6) trusty; urgency=low
+
+  [ Daniel Dadap ]
+  * prime-xconfig:
+    - Format the BusID string correctly (LP: #1282796).
+      The BusID string created by prime-xconfig had several problems:
+      1) It was missing the bus type "PCI", as recommended by
+         xorg.conf(5).
+      2) Values were written in hexadecimal, as reported by lspci,
+         instead of decimal, as expected by the server. (See the
+         comment at the top of xf86ParsePciBusString().)
+      3) The PCI domain was not specified.
+      Giving the BusID string in the wrong format could cause the X
+      server to fail to parse the BusID, or to parse numbers in the
+      wrong base. On systems with more than one PCI domain, `lspci -n`
+      output would include the domain number, which is omitted by
+      default on systems with only one PCI domain. nv_get_id()
+      expects the bus number to be the first field, which would not be
+      correct when `lspci -n` reports the domain, as it does on
+      systems with multiple domains.
+      Fix these issues by always reporting the domain with `lspci -Dn`
+      and using it in the BusID string, prepending "PCI:" to the
+      BusID string, and printing all numeric values in decimal.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 21 Feb 2014 09:50:34 +0100
+
+nvidia-prime (0.5.5) trusty; urgency=low
+
+  * debian/rules:
+    - Fix path to lightdm configuration files.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 31 Jan 2014 16:12:44 +0100
+
+nvidia-prime (0.5.4) trusty; urgency=low
+
+  * Do not touch lightdm.conf any more on anything newer than Precise.
+    90-nvidia.conf now contains only the relevant settings for PRIME
+    (LP: #1267442).
+  * Also remove any previous lightdm.conf that nvidia-prime might
+    have messed up.
+  * Major packaging clean-up. The variable in debian/rules and in
+    templates have clearer names now.
+  * Clean up the old 90-nvidia.conf that we used to ship in /etc.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Tue, 28 Jan 2014 17:30:43 +0100
+
+nvidia-prime (0.5.3) trusty; urgency=low
+
+  * debian/postrm.in, debian/rules:
+    - Avoid calling dpkg-architecture (LP: #1264611).
+  * prime-xconfig:
+    - Properly format hexadecimal parameters (LP: #1252667).
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 10 Jan 2014 14:41:22 +0100
+
+nvidia-prime (0.5.2) trusty; urgency=low
+
+  * debian/control:
+    - Add an alternative dependency on gdm and kdm
+      so that gdm or kdm users are not forced to install
+      lightdm now that nvidia depends on nvidia-prime.
+      This fixes only the single graphics card use case
+      (hybrid graphics won't still work without lightdm)
+      but it's a step in the right direction (LP: #1262068).
+  * debian/preinst.in:
+    - Set the lightdm configuration bits only if lightdm
+      is the default display manager.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 20 Dec 2013 15:43:58 +0100
+
+nvidia-prime (0.5.1) trusty; urgency=low
+
+  * debian/nvidia-prime.upstart, prime-switch:
+    - Send events to start and to stop the
+      nvidia-persistenced upstart job.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Tue, 17 Dec 2013 10:26:25 +0100
+
+nvidia-prime (0.5) trusty; urgency=low
+
+  * debian/control:
+    - Depend on bbswitch-dkms and upstart.
+    - Depend on lightdm (>= 1.9.1).
+    - Build only for i386 and amd64.
+  * debian/install.in:
+    - Install the new components.
+  * debian/nvidia-prime.upstart:
+    - Make sure that NVIDIA is always enabled on shutdown.
+      This will avoid issues with the BIOS.
+    - Make sure that bbswitch does not disable nvidia when
+      loading.
+    - Set up xorg.conf on boot.
+  * debian/preinst.in:
+    - Create a display-stopped-script entry in lightdm.conf.
+    - Create /etc/lightdm/hybrid_default.
+  * debian/postinst.in:
+    - Remove it.
+  * debian/postrm.in:
+    - Remove /etc/lightdm/hybrid_default on package removal.
+    - Remove the display-stopped-script entry from
+      lightdm.conf.
+    - Restore the non-prime related alternative on removal.
+  * New upstream release:
+    - Improved hardware detection. The package won't change
+      anything if the hardware configuration is not
+      supported. We only support laptops with NVIDIA
+      optimus hardware and nvidia driver >= 319
+      (LP: #1249067).
+    - More robust system to deal with xorg.conf. Broken
+      xorg.conf files will be automatically restored to
+      a configuration that works with hybrid graphics.
+      Whether on boot or on log out, we always try to make
+      sure that the system is configured correctly.
+    - Added prime-select switcher to switch between the
+      integrated and the discrete GPU. This allows users
+      to disable the discrete GPU to save power. Users'
+      settings are now saved and applied on log out and
+      on boot.
+    - Added a quirk system to pass custom options to the
+      bbswitch module (see /etc/prime-quirks).
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Wed, 04 Dec 2013 16:23:32 +0100
+
+nvidia-prime (0.4.2) trusty; urgency=low
+
+  * debian/postinst.in: fix issue with printf
+    - Apparently the printf command treats string values
+      with leading zeros as octal. Work around this by
+      removing any leading zeros (LP: #1219650).
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Wed, 23 Oct 2013 15:45:24 +0200
+
+nvidia-prime (0.4.1) trusty; urgency=low
+
+  * debian/preinst.in:
+    - Remove leftover in the test condition. This was
+      causing the lightdm.conf file to be rewritten
+      every time. This is a serious problem on the
+      different Ubuntu flavours (LP: #1224098).
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Wed, 23 Oct 2013 13:03:55 +0200
+
+nvidia-prime (0.4) saucy; urgency=low
+
+  * debian/postinst.in, hybrid-power:
+    - Make sure to support more pci device classes as per
+      the pci.ids file (LP: #1207626).
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 08 Aug 2013 11:27:27 +0200
+
+nvidia-prime (0.3) saucy; urgency=low
+
+  * debian/postinst.in:
+    - Do not touch the lightdm.conf (LP: #1199342).
+  * debian/preinst.in:
+    - Create a lightdm.conf if none can be found.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Wed, 24 Jul 2013 10:20:06 +0200
+
+nvidia-prime (0.2) saucy; urgency=low
+
+  * debian/control:
+    - Conflict/replace/provide the hybrid-graphics virtual
+      package.
+  * Make sure to start X instead of XMir or hybrid graphics
+    won't work, at least for now.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Wed, 03 Jul 2013 11:42:17 +0200
+
+nvidia-prime (0.1) saucy; urgency=low
+
+  * Initial Release.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 31 May 2013 14:10:46 +0200

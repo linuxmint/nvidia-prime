@@ -12,7 +12,8 @@
 description	"NVIDIA PRIME Power Saving Mode"
 author		"Alberto Milone <alberto.milone@canonical.com>"
 
-start on starting lightdm
+start on (starting lightdm
+          or starting mdm)
 stop on runlevel [016]
 
 emits nvidia-off

@@ -1,8 +1,66 @@
-nvidia-prime (0.6.2linuxmint1) qiana; urgency=medium
+nvidia-prime (0.8.2) xenial; urgency=medium
 
-  * Added support for MDM
+  * prime-select:
+    - Add support for EGL alternatives.
 
- -- Clement Lefebvre <root@linuxmint.com>  Sat, 17 May 2014 12:53:03 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 28 Jan 2016 17:33:03 +0100
+
+nvidia-prime (0.8.1) vivid; urgency=medium
+
+  * debian/control:
+    - Add alternative dependency on sddm.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 02 Apr 2015 17:43:15 +0200
+
+nvidia-prime (0.8) vivid; urgency=medium
+
+  * Drop upstart dependency, previous version added systemd support.
+    (LP: #1428849)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 09 Mar 2015 08:43:49 +0100
+
+nvidia-prime (0.7) vivid; urgency=medium
+
+  * debian/control, debian/dirs.in, debian/install.in,
+    debian/nvidia-prime.service, debian/rules:
+    - Add support for systemd (LP: #1312255).
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 16 Jan 2015 19:32:00 +0100
+
+nvidia-prime (0.6.6) utopic; urgency=medium
+
+  * prime-select:
+    - Simplify the logic for enablement. The simplified logic
+      should also be more robust and try harder instead of
+      complaining and aborting early (LP: #1310023).
+      This is now possible thanks to the fact that we allow
+      installing only one binary driver at the time. This is
+      not the case in Ubuntu <= 12.04.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 19 Jun 2014 15:48:06 +0200
+
+nvidia-prime (0.6.5) utopic; urgency=medium
+
+  * debian/dirs.in, debian/install.in, oem/00-prime-offload:
+    - Add support for offloading rendering to NVIDIA when using
+      the OEM installer.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 22 May 2014 15:54:58 +0200
+
+nvidia-prime (0.6.4) utopic; urgency=medium
+
+  * prime-quirks:
+    - Remove quirk for "Vostro 20 3015". We were really getting
+      a false positive in the gpu-manager (LP: #1310516).
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 16 May 2014 13:16:57 +0200
+
+nvidia-prime (0.6.3) utopic; urgency=medium
+
+  * prime-quirks:
+    - Add quirk for "Vostro 20 3015" (LP: #1310516).
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Mon, 12 May 2014 15:47:15 +0200
 
 nvidia-prime (0.6.2) trusty; urgency=medium
 
